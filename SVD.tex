@@ -30,6 +30,27 @@
 
 \section{Theories}
 \subsection{Motivation}
+The singular value decomposition, often referred as SVD, is the best factorization of any matrix:
+$$A = U \Sigma V^T$$
+where $U,T$ are orthonormal and $\Sigma$ is diagonal.
+
+Recall from MATH 308 that if we have a symmetric matrix $A$, then we can diagonalize it with the form $A=PDP^{-1}$ where $P$ is the orthonormal eigenvectors and $D$ is diagonal. This is just a special case of the SVD, that $P = U = V$.
+
+The essence of SVD is very simple. That is, having a linear transformation $A$ from $\mathbb{R}$ to $\mathbb{R}$ (for $\mathbb{C}$ to $\mathbb{C}$ if $A$ is complex), we want to find an orthonormal basis ($\vec{v}_i$'s) in the domain such that the image of these basis are still orthogonal (a scaler multiple of $\vec{u}_i$ where $\vec{u}_i$'s orthogonal) after the transformation $A$. In linear algebra language, this means 
+\begin{align*}
+AV =A \begin{pmatrix} \vec{v}_1 & \vec{v}_2 & \cdots & \vec{v}_n  \\ \downarrow & \downarrow & &\downarrow \end{pmatrix} &= \begin{pmatrix} \sigma_1 \vec{u}_1 & \sigma_2 \vec{u}_2 & \cdots &\sigma_n \vec{u}_n  \\ \downarrow & \downarrow & &\downarrow \end{pmatrix} \\
+&= \begin{pmatrix} \vec{u}_1 & \vec{u}_2 & \cdots & \vec{u}_n  \\ \downarrow & \downarrow & &\downarrow \end{pmatrix} \begin{pmatrix} \sigma_1 & 0 & \cdots & 0 \\ 0& \sigma_2 & \cdots & 0 \\ \vdots & \vdots & \ddots & \sigma_n \end{pmatrix} \\
+&= U \Sigma
+\end{align*}
+where $\vec{v}_1, \vec{v}_2, \cdots, \vec{v}_n$ are orthonormal to each other (hence $V$ orthonormal), $\vec{u}_1, \vec{u}_2, \cdots, \vec{u}_n$ are orthonormal orthonormal to each other (hence $U$ orthonormal), and $\Sigma$ is diagonal.
+
+Since $V$ is orthogonal, $V^{-1} = V^T$, hence after rearranging we have
+\begin{align*}
+AV &= U \Sigma \\
+AV V^{-1} &= U \Sigma V^{-1} \\
+A &= U\Sigma V^T
+\end{align*}
+then we get the decomposition form we had for $A$.
 
 \subsection{How to Calculate SVD}
 For a given $A$, in order to find $U, \Sigma, V$ such that $A = U \Sigma V^T$ (where $U,V$ orthonormal and $\Sigma$ diagonal), there are a few preliminary results we need to prove.
@@ -43,7 +64,7 @@ If $A$ is symmetric positive semi-definite, then the strict grater sign changes 
 There are some nice theorems we can prove about symmetric positive definite matrix, which are essential for our calculation of SVD.
 \bigskip
 
-\textit{\textbf{Theorem:}} \textit{Let $A$ be a positive definite real matrix, then the eigenvalues of $A$ are positive.}
+\textit{\textbf{Theorem 1:}} \textit{Let $A$ be a positive definite real matrix, then the eigenvalues of $A$ are positive.}
 
 \begin{proof}
 Let $\lambda$ be an eigenvalue of $A$ and $x$ be the corresponding eigenvector. Then 
@@ -56,10 +77,10 @@ Note that $x^T x$ is just a normal inner product of $x$ with itself, that is, th
 Since A is positive definite, $x^T A x =\lambda ||x||^2> 0$. Because the norm $||x||^2 $ is the square of a non zero number ($x$ is an eigenvector, so must be non zero), it must be positive. Hence $$\lambda > \frac{0}{||x||^2} = 0$$
 \end{proof}
 
-Note that the above proof translates to symmetric positive semi-definite matrix, in this case the eigenvalues are non-negative.
+Note that the above proof translates to symmetric positive semi-definite matrix, in this case the eigenvalues are non-negative ($\lambda \ge 0$).
 \bigskip
 
-\textit{\textbf{Theorem:}} \textit{Let $A$ be any matrix, then $AA^T$ and $A^TA$ are symmetric positive semi-definite.}
+\textit{\textbf{Theorem 2:}} \textit{Let $A$ be any matrix, then $AA^T$ and $A^TA$ are symmetric positive semi-definite.}
 
 \begin{proof}
 First we will show that $AA^T$ is symmetric.
@@ -75,23 +96,25 @@ $$ A A^T = \begin{pmatrix} \vec{a}_1  & \rightarrow \\
 \vdots& \vdots & \ddots & \vdots \\
 \vec{a}_n \cdot \vec{a}_1 & \vec{a}_n \cdot \vec{a}_2 & \cdots & \vec{a} _n \cdot \vec{a}_n \end{pmatrix} 
 $$
-Note that here $a_i \cdot a_j = a_{i1}a_{j1} + a_{i2}a_{j2} + \cdots$, so $a_i \cdot a_j = a_j \cdot a_i$, hence the above matrix is symmetric.
+Note that here $a_i \cdot a_j = a_{i1}a_{j1} + a_{i2}a_{j2} + \cdots + a_{in}a_{jn}$, so $a_i \cdot a_j = a_j \cdot a_i$, hence the above matrix is symmetric.
 
 Now we will show that $AA^T$ is positive semi-definite. Using the formula for the transpose of a product, we can write
 $$x^T AA^T x = (A^Tx)^T (A^Tx) $$
 
-Notice that $A^Tx$ is just a column vector, let's call it $y$. Then we have $x^T AA^T x = y^T y = ||y||^2 \ge 0$. This shows $AA^T$ is positive semi-definite. 
+Notice that $(A^Tx)$ is just a column vector, let's call it $y$. Then we have $x^T AA^T x = y^T y = ||y||^2 \ge 0$. This shows $AA^T$ is positive semi-definite. 
 
 Let $A \rightarrow A^T$, then the same prove will show that $A^TA$ is also positive semi-definite.
 \end{proof}
 \bigskip
 
-Another theorem we will need is a theorem we have learned from MATH 308. That is, 
+Another theorem we will need is a theorem we have used from MATH 308. That is, 
 \bigskip
 
-\textit{\textbf{Theorem:}} \textit{Let $A$ be a $n \times n $ symmetric matrix, then we can write $A= P D P^{-1}$ where $P$ is orthogonal and have eigenvectors of $A$ as it's columns; and $D$ is diagonal with eigenvalues of $A$ as entries.}
+\textit{\textbf{Theorem 3:}} \textit{Let $A$ be a $n \times n $ symmetric matrix, then we can write $A= P D P^{-1}$ where $P$ is orthonormal and have eigenvectors of $A$ as it's columns; and $D$ is diagonal with eigenvalues of $A$ as diagonal entries.}
 
-(proof see your MATH 308 notes)
+\begin{proof}
+(see textbook, theorem 6.19 and 6.20)
+\end{proof}
 \bigskip 
 
 Now, equipped with these theorems, we can proceed to finding a formula for $U, \Sigma, V$. 
@@ -99,18 +122,18 @@ Now, equipped with these theorems, we can proceed to finding a formula for $U, \
 
 Given $A= U \Sigma V^T$ (where $U,V$ orthonormal and $\Sigma$ diagonal), to first find $V$ and $\Sigma$, we write the following 
 $$A^TA = ( U \Sigma V^T)^T ( U \Sigma V^T) = V \Sigma^T U^T U \Sigma V^T$$
-It is easy to see that if $D$ is diagonal then $D^T = D$ and $D^n$ can be calculated by taking each entry to the power of $n$. Moreover, In lecture 25, we learned that if a matrix $P$ is orthonormal, then $P^{-1} = P^T$. Plugging in these relations, we have 
+It is easy to see that if $D$ is diagonal then $D^T = D$ and $D^n$ can be calculated by taking each entry to the power of $n$. Moreover, in lecture 25, we learned that if a matrix $P$ is orthonormal, then $P^{-1} = P^T$. Plugging in these relations, we have 
 $$A^TA =V \Sigma^T U^T U \Sigma V^T = V \Sigma^T U^{-1} U \Sigma V^T =V \Sigma^T  \Sigma V^T = V \Sigma^2 V^{-1}$$
-Since $A^TA$ is symmetric positive semi-definite (particularly, symmetric), this is just the form of diagonalization we are familiar with from 308, that is, $$V = \begin{pmatrix} \vec{v}_{\lambda_1} & \vec{v}_{\lambda_2} & \cdots & \vec{v}_{\lambda_m} \end{pmatrix}, \; \Sigma^2 = \begin{pmatrix} \sigma^2_1 & 0&  \cdots & 0 \\ 0& \sigma^2_2 &\cdots & 0 \\ \vdots & \vdots & \ddots &0 \\
+Since $A^TA$ is symmetric positive semi-definite by theorem 2 (in particular it is symmetric symmetric), this is just the form of diagonalization we are familiar with from 308 (theorem 3), that is, $$V = \begin{pmatrix} \vec{v}_{\lambda_1} & \vec{v}_{\lambda_2} & \cdots & \vec{v}_{\lambda_m} \end{pmatrix}, \; \Sigma^2 = \begin{pmatrix} \sigma^2_1 & 0&  \cdots & 0 \\ 0& \sigma^2_2 &\cdots & 0 \\ \vdots & \vdots & \ddots &0 \\
 0 &0& \cdots & \sigma^2_m  \end{pmatrix}$$ 
-where $\sigma^2_i$ are eigenvalues of $A^TA$ and $\vec{v}_{\lambda_i}$ are the corresponding normalized eigenvectors. Notice that since $A^TA$ is positive semi-definite, the eigenvalues are non-negative and so $\sigma_i \in \mathbb{R}$. So in the case where $A$ is real, we won't have $A$ mapping to a complex vector space. 
+where $\sigma^2_i$ are eigenvalues of $A^TA$ and $\vec{v}_{\lambda_i}$ are the corresponding normalized orthogonal eigenvectors. Notice that since $A^TA$ is positive semi-definite, the eigenvalues are non-negative (theorem 1) and so $\sigma_i \in \mathbb{R}$. So in the case where $A$ is real, we won't have $A$ mapping to a complex vector space. 
 \bigskip
 
 Similarly, we can obtain $U$ by writing,
 $$AA^T = (U \Sigma V^T)(U \Sigma V^T)^T = U \Sigma V^T V \Sigma^TU^T = U \Sigma  \Sigma^TU^T = U  \Sigma^2U^{-1}$$
 Then 
 $$U = \begin{pmatrix} \vec{u}_{\lambda_1} & \vec{u}_{\lambda_2} & \cdots & \vec{u}_{\lambda_m} \end{pmatrix}$$ 
-where $\vec{u}_{\lambda_i}$ are normalized eigenvectors corresponding to the same set of $\Sigma^2$. One thing we have to be careful is that the order of $\vec{u}_{\lambda_i}$ matters. They must be in the order conformed with the order of eigenvalues in $\Sigma^2$.
+where $\vec{u}_{\lambda_i}$ are normalized orthogonal eigenvectors corresponding to the same set of $\Sigma^2$. One thing we have to be careful is that the order of $\vec{u}_{\lambda_i}$ matters. They must be in the order conformed with the order of eigenvalues in $\Sigma^2$.
 
 \subsection{Examples}
 
