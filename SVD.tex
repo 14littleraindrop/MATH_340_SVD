@@ -29,7 +29,15 @@
 
 \section{Introduction}
 \subsection{What is Singular Value Decomposition?}
+Singular Value Decomposition (SVD) is a factorization of a matrix into three separate matrices that give valuable properties. Let $A$ be an input matrix. Then we can decompose $A_{[m \times n]} = U_{[m \times r]} \Sigma_{[r \times r]} (V_{[n \times r]})^T$ where $U, \Sigma, V$ are unique, $U, V$ are orthonormal, and $\Sigma$ is diagonal. The singular values of $\Sigma$ are positive, and $\sigma_1 \geq \sigma_2 \geq \dots \geq 0$.
 
+\subsection{Why is Singular Value Decomposition Useful?}
+SVD is one of the most commonly used tools in data science today. The three matrices that SVD decomposes a matrix into allow us to understand and manipulate complex matrices with many data points. Since the singular values of $\Sigma$ are ordered, in large matrices we can use the first few dominant singular values, and ignore the rest, to arrive at an approximation of the input matrix. Below are several applications of SVD:
+\begin{itemize}
+  \item SVD can be used to solve $Ax = b$ where $A$ is not a square matrix. This approach is often used in linear regression models.
+  \item We see SVD in Google's 'PageRank' algorithm, as well as in other modern search engines. It is also used to find correlation patterns for recommendations on Netflix, YouTube, etc.
+  \item SVD is also used as a basis for Principal Component Analysis, which is key to interpreting data in higher dimensions and is used across machine learning.
+\end{itemize}
 
 \section{Theories}
 \subsection{Motivation}
@@ -139,6 +147,28 @@ $$U = \begin{pmatrix} \vec{u}_{\lambda_1} & \vec{u}_{\lambda_2} & \cdots & \vec{
 where $\vec{u}_{\lambda_i}$ are normalized orthogonal eigenvectors corresponding to the same set of $\Sigma^2$. One thing we have to be careful is that the order of $\vec{u}_{\lambda_i}$'s matters. They must be in the order conformed with the order of eigenvalues in $\Sigma^2$.
 
 \subsection{Examples}
+We will perform the Singular Value Decomposition of the following matrix:
+$$A = 
+\begin{bmatrix}
+4& 4\\
+-3& 3\end{bmatrix}$$
+First, we compute $A^TA$:
+$$A^TA=\begin{bmatrix}4& -3\\4& 3\end{bmatrix} 
+        \begin{bmatrix}4& 4\\-3& 3\end{bmatrix} =
+        \begin{bmatrix}25& 7\\7& 25\end{bmatrix}$$ \\
+Note that $\begin{bmatrix}1\\1\end{bmatrix}$ and $\begin{bmatrix}1\\-1\end{bmatrix}$ are two orthogonal eigenvectors of $A^TA$. \\ 
+To get an orthonormal basis, let $v_1 = \begin{bmatrix}\frac{1}{\sqrt{2}}\\\frac{1}{\sqrt{2}}\end{bmatrix}$ and $v_2 = \begin{bmatrix}\frac{1}{\sqrt{2}}\\\frac{-1}{\sqrt{2}}\end{bmatrix}$. These have corresponding eigenvectors $(\sigma_1)^2=32, (\sigma_2)^2=18$. Thus, we have:
+$$V = \begin{bmatrix}\frac{1}{\sqrt{2}}&\frac{1}{\sqrt{2}}\\\frac{1}{\sqrt{2}}&\frac{-1}{\sqrt{2}}\end{bmatrix}$$
+$$\Sigma= \begin{bmatrix}\sqrt{32}& 0\\0& \sqrt{18}\end{bmatrix}= \begin{bmatrix}4\sqrt{2}& 0\\0& 3\sqrt{2}\end{bmatrix}$$ \\
+Solving for $U$:
+$$A = U \Sigma V^T$$
+$$\begin{bmatrix}4& 4\\-3& 3\end{bmatrix} = U \begin{bmatrix}4\sqrt{2}& 0\\0& 3\sqrt{2}\end{bmatrix}
+\begin{bmatrix}\frac{1}{\sqrt{2}}&\frac{1}{\sqrt{2}}\\\frac{1}{\sqrt{2}}&\frac{-1}{\sqrt{2}}\end{bmatrix}$$
+$$U = \begin{bmatrix}1& 0\\0& -1\end{bmatrix}$$
+So, we have computed the SVD of $A$:
+$$A = U \Sigma V^T = \begin{bmatrix}1& 0\\0& -1\end{bmatrix}
+\begin{bmatrix}4\sqrt{2}& 0\\0& 3\sqrt{2}\end{bmatrix}
+\begin{bmatrix}\frac{1}{\sqrt{2}}&\frac{1}{\sqrt{2}}\\\frac{1}{\sqrt{2}}&\frac{-1}{\sqrt{2}}\end{bmatrix}$$
 
 \newpage
 \section{Application - Principal Component Analysis}
