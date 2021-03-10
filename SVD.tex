@@ -35,9 +35,9 @@
 \subsection{Motivation}
 The singular value decomposition, often refer to as SVD, is the best factorization of any matrix:
 $$A = U \Sigma V^T$$
-where $U,T$ are orthonormal and $\Sigma$ is diagonal.
+where $U,V$ are orthonormal and $\Sigma$ is diagonal.
 
-Recall from MATH 308 that if we have a symmetric matrix $A$, then we can diagonalize it with the form $A=PDP^{-1}$ where $P$ is the orthonormal eigenvectors and $D$ is diagonal. This is just a special case of the SVD, that $P = U = V$.
+Recall from MATH 308 that if we have a symmetric matrix $A$, then we can diagonalize it with the form $A=PDP^{-1}$ where $P$ is the orthonormal eigenvectors and $D$ is diagonal. This is just a special case of the SVD, where $P = U = V$.
 
 The essence of SVD is very simple. That is, having a linear transformation $A$ from $\mathbb{R}$ to $\mathbb{R}$ (for $\mathbb{C}$ to $\mathbb{C}$ if $A$ is complex), we want to find an orthonormal basis ($\vec{v}_i$'s) in the domain such that the image of this basis are still orthogonal (a scaler multiple of $\vec{u}_i$ where $\vec{u}_i$'s orthogonal) after the transformation $A$. In linear algebra language, this means 
 \begin{align*}
@@ -45,7 +45,7 @@ AV =A \begin{pmatrix} \vec{v}_1 & \vec{v}_2 & \cdots & \vec{v}_n  \\ \downarrow 
 &= \begin{pmatrix} \vec{u}_1 & \vec{u}_2 & \cdots & \vec{u}_n  \\ \downarrow & \downarrow & &\downarrow \end{pmatrix} \begin{pmatrix} \sigma_1 & 0 & \cdots & 0 \\ 0& \sigma_2 & \cdots & 0 \\ \vdots & \vdots & \ddots & \sigma_n \end{pmatrix} \\
 &= U \Sigma
 \end{align*}
-where $\vec{v}_1, \vec{v}_2, \cdots, \vec{v}_n$ are orthonormal to each other (hence $V$ orthonormal), $\vec{u}_1, \vec{u}_2, \cdots, \vec{u}_n$ are orthonormal orthonormal to each other (hence $U$ orthonormal), and $\Sigma$ is diagonal.
+where $\vec{v}_1, \vec{v}_2, \cdots, \vec{v}_n$ are orthonormal to each other (hence $V$ orthonormal), $\vec{u}_1, \vec{u}_2, \cdots, \vec{u}_n$ are orthonormal to each other (hence $U$ orthonormal), and $\Sigma$ is diagonal.
 
 Since $V$ is orthogonal, $V^{-1} = V^T$, hence after rearranging we have
 \begin{align*}
@@ -150,10 +150,10 @@ Take a look at the following table of food consumption.
 \end{center}
 
 
-Suppose you wanted to see if one of these countries consumes a diet different that the others. How would you do that? At first glance they all seem very similar. You might notice some interesting variation among certain food types, but the overall variation is certainly not obvious.
+Suppose you wanted to see if one of these countries consumes a diet that is significantly different than the others. How would you do that? At first glance they all seem very similar. You might notice some interesting variation among certain food types, but the overall variation is certainly not obvious.
 \bigskip
 
-We can use a process called principal component analysis (PCA) to help us out. PCA is a factorization of used for reducing the dimensions of a multivariate data set. Furthermore, when it reduces the dimensions, it does so by removing dimension with the least variability, perfect for this situation.
+We can use a process called principal component analysis (PCA) to help us out. PCA is a factorization used for reducing the dimensions of a multivariate data set. Furthermore, when it reduces the dimensions, it does so by removing dimension with the least variability, perfect for this situation.
 \bigskip
 
 By applying PCA, we can reduce the 17 variables to only two and create a nice, easy to read, graph.
@@ -191,7 +191,7 @@ Recall that $B$ is our data matrix with the mean of each row subtracted off and 
 $$T=BV=U\Sigma$$
 What this means is that we can also find the PCA simply using the SVD!
 
-\item Interpreting the Principle Components: We have the principal components, now what? What do these mean? The eigenvalues of $C$, found in step 4 (also the singular values of the SVD of $B$) represents the amount of variance captured by the particular loading $V$. In many cases most of the variance will be captured in the first few principal components. It follows from this that if we want to reduce the dimensions, say to dim $k$, of our data matrix we can simply take the matrix composed of the first $k$ principal components. We can then explicitly compute the amount of variance retained in our reduced matrix by taking the sum of the eigenvalues (singular values of SVD) of the principal components of the reduced matrix and dividing them by the total. For a rank $n$ matrix and a rank $k$ reduced matrix this looks like,
+\item Interpreting the Principle Components: We have the principal components, now what? What do these mean? The eigenvalues of $C$, found in step 4 (also the singular values of the SVD of $B$) represent the amount of variance captured by the particular loading $V$. In many cases most of the variance will be captured in the first few principal components. It follows from this that if we want to reduce the dimensions, say to dim $k$, of our data matrix we can simply take the matrix composed of the first $k$ principal components. We can then explicitly compute the amount of variance retained in our reduced matrix by taking the sum of the eigenvalues (singular values of SVD) of the principal components of the reduced matrix and dividing them by the total. For a rank $n$ matrix and a rank $k$ reduced matrix this looks like,
 
 $$\text{Var}(B)=\frac{\sum_{j=1}^{k}\lambda_j}{\sum_{j=1}^{n}\lambda_j}$$
 
