@@ -26,28 +26,19 @@
 \begin{document}
 
 \maketitle
-
-\section{Introduction}
-\subsection{What is Singular Value Decomposition?}
-Singular Value Decomposition (SVD) is a factorization of a matrix into three separate matrices that give valuable properties. Let $A$ be an input matrix. Then we can decompose $A_{[m \times n]} = U_{[m \times r]} \Sigma_{[r \times r]} (V_{[n \times r]})^T$ where $U, \Sigma, V$ are unique, $U, V$ are orthonormal, and $\Sigma$ is diagonal. The singular values of $\Sigma$ are positive, and $\sigma_1 \geq \sigma_2 \geq \dots \geq 0$.
-
-\subsection{Why is Singular Value Decomposition Useful?}
-SVD is one of the most commonly used tools in data science today. The three matrices that SVD decomposes a matrix into allow us to understand and manipulate complex matrices with many data points. Since the singular values of $\Sigma$ are ordered, in large matrices we can use the first few dominant singular values, and ignore the rest, to arrive at an approximation of the input matrix. Below are several applications of SVD:
-\begin{itemize}
-  \item SVD can be used to solve $Ax = b$ where $A$ is not a square matrix. This approach is often used in linear regression models.
-  \item We see SVD in Google's 'PageRank' algorithm, as well as in other modern search engines. It is also used to find correlation patterns for recommendations on Netflix, YouTube, etc.
-  \item SVD is also used as a basis for Principal Component Analysis, which is key to interpreting data in higher dimensions and is used across machine learning.
-\end{itemize}
+Singular Value Decomposition (SVD) is a factorization of a matrix into 3 separate matrices that give valuable properties. We will discuss how to calculate the SVD, prove important related theorems, and explore an application of SVD called Principal Component Analysis.
+\tableofcontents
+\newpage
 
 \section{Theories}
 \subsection{Motivation}
-The singular value decomposition, often refer to as SVD, is the best factorization of any matrix:
+The singular value decomposition, often refer to as SVD, is a useful factorization of any matrix:
 $$A = U \Sigma V^T$$
 where $U,T$ are orthonormal and $\Sigma$ is diagonal.
 
 Recall from MATH 308 that if we have a symmetric matrix $A$, then we can diagonalize it with the form $A=PDP^{-1}$ where $P$ is the orthonormal eigenvectors and $D$ is diagonal. This is just a special case of the SVD, that $P = U = V$.
 
-The essence of SVD is very simple. That is, having a linear transformation $A$ from $\mathbb{R}$ to $\mathbb{R}$ (for $\mathbb{C}$ to $\mathbb{C}$ if $A$ is complex), we want to find an orthonormal basis ($\vec{v}_i$'s) in the domain such that the image of this basis are still orthogonal (a scaler multiple of $\vec{u}_i$ where $\vec{u}_i$'s orthogonal) after the transformation $A$. In linear algebra language, this means 
+The essence of SVD is very simple. That is, having a linear transformation $A$ from $\mathbb{R}$ to $\mathbb{R}$, we want to find an orthonormal basis ($\vec{v}_i$'s) in the domain such that the image of this basis are still orthogonal (a scaler multiple of $\vec{u}_i$ where $\vec{u}_i$'s orthogonal) after the transformation $A$. Note that SVD can be preformed for complex and infinite dimensional transformations, but we will only discuss the finite, real case here. In linear algebra language, this means 
 \begin{align*}
 AV =A \begin{pmatrix} \vec{v}_1 & \vec{v}_2 & \cdots & \vec{v}_n  \\ \downarrow & \downarrow & &\downarrow \end{pmatrix} &= \begin{pmatrix} \sigma_1 \vec{u}_1 & \sigma_2 \vec{u}_2 & \cdots &\sigma_n \vec{u}_n  \\ \downarrow & \downarrow & &\downarrow \end{pmatrix} \\
 &= \begin{pmatrix} \vec{u}_1 & \vec{u}_2 & \cdots & \vec{u}_n  \\ \downarrow & \downarrow & &\downarrow \end{pmatrix} \begin{pmatrix} \sigma_1 & 0 & \cdots & 0 \\ 0& \sigma_2 & \cdots & 0 \\ \vdots & \vdots & \ddots & \sigma_n \end{pmatrix} \\
@@ -64,18 +55,17 @@ A &= U\Sigma V^T
 then we get the decomposition form we had for $A$.
 
 \subsection{How to calculate SVD}
-For a given $A$, in order to find $U, \Sigma, V$ such that $A = U \Sigma V^T$ (where $U,V$ orthonormal and $\Sigma$ diagonal), there are a few preliminary results we need to prove.
+For any matrix $A$, it has been proven that $A$ can be decomposed into the form $A = U \Sigma V^T$ (where $U,V$ orthonormal and $\Sigma$ diagonal). The proof of this fact is outside the scope of these notes. However, we will show below how to actually find $U, \Sigma, V$. First, there are a few preliminary results we need to prove.
 \bigskip
 
-\textit{\textbf{Def:}} \textit{A real $n \times n$ matrix $A$ is symmetric positive definite if it is symmetric (i.e. $A=A^T$) and 
-$$ x^T A x > 0 \text{ for all nonzero vectors }x$$
-If $A$ is symmetric positive semi-definite, then the strict grater sign changes to greater than or equal to.}
+\textit{\textbf{Def:}} \textit{A real $n \times n$ matrix $A$ is symmetric positive semi-definite if it is symmetric (i.e. $A=A^T$) and 
+$$ x^T A x \geq 0 \text{ for all nonzero vectors }x$$}
 \bigskip
 
-There are some nice theorems we can prove about symmetric positive definite matrix, which are essential for our calculation of SVD.
+There are some helpful theorems we can prove about symmetric positive semi-definite matrices, which are essential for our calculation of SVD.
 \bigskip
 
-\textit{\textbf{Theorem 1:}} \textit{Let $A$ be a positive definite real matrix, then the eigenvalues of $A$ are positive.}
+\textit{\textbf{Theorem 1:}} \textit{Let $A$ be a positive semi-definite real matrix, then the eigenvalues of $A$ are non-negative.}
 
 \begin{proof}
 Let $\lambda$ be an eigenvalue of $A$ and $x$ be the corresponding eigenvector. Then 
@@ -85,10 +75,8 @@ x^T A x &= \lambda x^Tx  = \lambda || x ||^2
 \end{align*}
 Note that $x^T x$ is just a normal inner product of $x$ with itself, that is, the sum of each component square.
   
-Since A is positive definite, $x^T A x =\lambda ||x||^2> 0$. Because the norm $||x||^2 $ is the square of a non-zero number ($x$ is an eigenvector, so must be non-zero), it must be positive. Hence $$\lambda > \frac{0}{||x||^2} = 0$$
+Since A is positive semi-definite, $x^T A x =\lambda ||x||^2 \geq 0$. Because the norm $||x||^2 $ is the square of a non-zero number ($x$ is an eigenvector, so must be non-zero), it must be positive. Hence: $$\lambda \geq \frac{0}{||x||^2} = 0$$
 \end{proof}
-
-Note that the above proof translates to a symmetric positive semi-definite matrix, in this case, the eigenvalues are non-negative ($\lambda \ge 0$).
 \bigskip
 
 \textit{\textbf{Theorem 2:}} \textit{Let $A$ be any matrix, then $AA^T$ and $A^TA$ are symmetric positive semi-definite.}
@@ -146,7 +134,7 @@ Then
 $$U = \begin{pmatrix} \vec{u}_{\lambda_1} & \vec{u}_{\lambda_2} & \cdots & \vec{u}_{\lambda_m} \end{pmatrix}$$ 
 where $\vec{u}_{\lambda_i}$ are normalized orthogonal eigenvectors corresponding to the same set of $\Sigma^2$. One thing we have to be careful is that the order of $\vec{u}_{\lambda_i}$'s matters. They must be in the order conformed with the order of eigenvalues in $\Sigma^2$.
 
-\subsection{Example}
+\subsection{Examples}
 We will perform the Singular Value Decomposition of the following matrix:
 $$A = 
 \begin{bmatrix}
@@ -180,19 +168,20 @@ Take a look at the following table of food consumption.
 \end{center}
 
 
-Suppose you wanted to see if one of these countries consumes a diet different that the others. How would you do that? At first glance they all seem very similar. You might notice some interesting variation among certain food types, but the overall variation is certainly not obvious.
+Suppose you wanted to see if one of these countries consumes a diet significantly different than the others. How would you do that? At first glance they all seem very similar. You might notice some interesting variation among certain food types, but the overall variation is certainly not obvious. 
 \bigskip
 
-We can use a process called principal component analysis (PCA) to help us out. PCA is a factorization of used for reducing the dimensions of a multivariate data set. Furthermore, when it reduces the dimensions, it does so by removing dimension with the least variability, perfect for this situation.
+We can use a process called principal component analysis (PCA) to help us out. PCA is a factorization used for reducing the dimensions of a multivariate data set. Furthermore, when it reduces the dimensions, it does so by projecting the total dimensions onto a lower dimensional space in such as way that preserves as much of the variability within the data as possible.
+
 \bigskip
+By applying PCA, we can reduce the 17 variables to only two. The variables, names pca 1 and pca 2 represent a two dimensional subspace that approximates the data contained in all 17 dimensions. One should note that this is different than getting ride of all but the two most important categories (such as Alcohol and Fish). Instead, each axis is a low dimension approximation so each variable could contain a combination of each of the 17 variables. We see what this means more explicitly when we learn how to compute the PCA below. The benefit of reducing the dimension in this case it we can represent a close approximation of our data on a two dimensional data set that we can easy interpret, unlike the 17 dimensional data set.
+\newpage
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=12cm]{(18).png}
+\end{figure}
 
-By applying PCA, we can reduce the 17 variables to only two and create a nice, easy to read, graph.
-
-\begin{center}
-\includegraphics[width=12cm]{(18).png}
-\end{center}
-
-From here it is obvious that Northern Ireland's diet is different than the other countries. This makes sense because Northern Ireland is the only of the four countries not on the Island of Great Britain!
+Looking at our dim 2 approximation it is obvious that Northern Ireland's diet is different than the other countries. This makes sense because Northern Ireland is the only of the four countries not on the Island of Great Britain!
 
 \subsection{How to do a Principle Component Analysis}
 PCA is done using all the framework we have built up studying the SVD. In fact, PCA is simply a statistical interpretation of the SVD. It has slightly different language as the the literature for PCA uses different conventions than the SVD literature but the concepts are analogous. Let's walk through the steps to compute do the principal component analysis shown above.
@@ -313,6 +302,13 @@ For completeness sake, below is the calculation (in Julia) for the principal com
 \includegraphics[width=6cm]{(19).png}
 \end{center}
 
+\section{Conclusion and Other Applications}
+So far we have reviewed what the SVD is and how to compute it. We have looked at one application of the SVD in statistics called Principal Component Analysis. However, we are only barely touching on all the possible applications of the SVD. The SVD has uses in both "pure" math and application in many other other contexts. Some example uses of SVD outside of PCA are:
+\begin{itemize}
+  \item The PCA can be applied to images and form a rudimentary image compression algorithm.
+  \item Solving $Ax = b$ where $A$ is not a square matrix. This approach is often used in linear regression models.
+  \item It is involved in Google's 'PageRank' algorithm, as well as in other modern search engines. It is also used to find correlation patterns for recommendations on Netflix, YouTube, etc.
+\end{itemize}
 
 
 \end{document}
