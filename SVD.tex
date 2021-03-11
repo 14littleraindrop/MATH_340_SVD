@@ -14,6 +14,8 @@
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
 
+\newtheorem{theorem}{Theorem}
+
 
 \setlength\parindent{24pt}
 
@@ -32,13 +34,13 @@ Singular Value Decomposition (SVD) is a factorization of a matrix into 3 separat
 
 \section{Theories}
 \subsection{Motivation}
-The singular value decomposition, often refer to as SVD, is a useful factorization of any matrix:
+The singular value decomposition, often referred to as the SVD, is a useful factorization of any matrix. Let $A\in\mathbb{R}^{m\times n}$, then the SVD of $A$ is
 $$A = U \Sigma V^T$$
-where $U,T$ are orthonormal and $\Sigma$ is diagonal.
+where $U\in\mathbb{R}^{n\times n}$ is orthonormal, $T\in\mathbb{R}^{m\times m}$ is orthonormal, and $\Sigma\in\mathbb{R}^{n\times m}$ is diagonal.
 
-Recall from MATH 308 that if we have a symmetric matrix $A$, then we can diagonalize it with the form $A=PDP^{-1}$ where $P$ is the orthonormal eigenvectors and $D$ is diagonal. This is just a special case of the SVD, that $P = U = V$.
+Recall from MATH 308 that if we have a symmetric matrix $A$, then we can diagonalize it with the form $A=PDP^{-1}$ where $P$ is the orthonormal eigenvectors and $D$ is diagonal. This is just a special case of the SVD, that $P = U = V$. What makes the SVD useful is that it is a sort of "diagonalization" that does not require the underlying matrix to be square.
 
-The essence of SVD is very simple. That is, having a linear transformation $A$ from $\mathbb{R}$ to $\mathbb{R}$, we want to find an orthonormal basis ($\vec{v}_i$'s) in the domain such that the image of this basis are still orthogonal (a scaler multiple of $\vec{u}_i$ where $\vec{u}_i$'s orthogonal) after the transformation $A$. Note that SVD can be preformed for complex and infinite dimensional transformations, but we will only discuss the finite, real case here. In linear algebra language, this means 
+The essence of SVD is simple. That is, having a linear transformation $A$ from $\mathbb{R}^n$ to $\mathbb{R}^m$, we want to find an orthonormal basis ($\vec{v}_i$'s) in the domain such that the image of this basis is still orthogonal (a scalar multiple of $\vec{u}_i$ where $\vec{u}_i$'s orthogonal) after the transformation $A$. Note that SVD can be preformed for complex and infinite dimensional transformations, but we will only discuss the finite, real case here. In linear algebra language, this means 
 \begin{align*}
 AV =A \begin{pmatrix} \vec{v}_1 & \vec{v}_2 & \cdots & \vec{v}_n  \\ \downarrow & \downarrow & &\downarrow \end{pmatrix} &= \begin{pmatrix} \sigma_1 \vec{u}_1 & \sigma_2 \vec{u}_2 & \cdots &\sigma_n \vec{u}_n  \\ \downarrow & \downarrow & &\downarrow \end{pmatrix} \\
 &= \begin{pmatrix} \vec{u}_1 & \vec{u}_2 & \cdots & \vec{u}_n  \\ \downarrow & \downarrow & &\downarrow \end{pmatrix} \begin{pmatrix} \sigma_1 & 0 & \cdots & 0 \\ 0& \sigma_2 & \cdots & 0 \\ \vdots & \vdots & \ddots & \sigma_n \end{pmatrix} \\
@@ -65,7 +67,9 @@ $$ x^T A x \geq 0 \text{ for all nonzero vectors }x$$}
 There are some helpful theorems we can prove about symmetric positive semi-definite matrices, which are essential for our calculation of SVD.
 \bigskip
 
-\textit{\textbf{Theorem 1:}} \textit{Let $A$ be a positive semi-definite real matrix, then the eigenvalues of $A$ are non-negative.}
+\begin{theorem}
+Let $A$ be a positive semi-definite real matrix, then the eigenvalues of $A$ are non-negative.
+\end{theorem} 
 
 \begin{proof}
 Let $\lambda$ be an eigenvalue of $A$ and $x$ be the corresponding eigenvector. Then 
@@ -79,7 +83,9 @@ Since A is positive semi-definite, $x^T A x =\lambda ||x||^2 \geq 0$. Because th
 \end{proof}
 \bigskip
 
-\textit{\textbf{Theorem 2:}} \textit{Let $A$ be any matrix, then $AA^T$ and $A^TA$ are symmetric positive semi-definite.}
+\begin{theorem}
+Let $A$ be any matrix, then $AA^T$ and $A^TA$ are symmetric positive semi-definite.
+\end{theorem}
 
 \begin{proof}
 First, we will show that $AA^T$ is symmetric.
@@ -109,7 +115,8 @@ Let $A \rightarrow A^T$, then the same prove will show that $A^TA$ is also posit
 Another theorem we will need is a theorem we have used from MATH 308. That is, 
 \bigskip
 
-\textit{\textbf{Theorem 3:}} \textit{Let $A$ be a $n \times n $ symmetric matrix, then we can write $A= P D P^{-1}$ where $P$ is orthonormal and have eigenvectors of $A$ as its columns, and $D$ is diagonal with eigenvalues of $A$ as diagonal entries.}
+\begin{theorem} Let $A$ be a $n \times n $ symmetric matrix, then we can write $A= P D P^{-1}$ where $P$ is orthonormal and have eigenvectors of $A$ as its columns, and $D$ is diagonal with eigenvalues of $A$ as diagonal entries.
+\end{theorem}
 
 \begin{proof}
 (see textbook, theorem 6.19 and 6.20)
@@ -133,6 +140,39 @@ $$AA^T = (U \Sigma V^T)(U \Sigma V^T)^T = U \Sigma V^T V \Sigma^TU^T = U \Sigma 
 Then 
 $$U = \begin{pmatrix} \vec{u}_{\lambda_1} & \vec{u}_{\lambda_2} & \cdots & \vec{u}_{\lambda_m} \end{pmatrix}$$ 
 where $\vec{u}_{\lambda_i}$ are normalized orthogonal eigenvectors corresponding to the same set of $\Sigma^2$. One thing we have to be careful is that the order of $\vec{u}_{\lambda_i}$'s matters. They must be in the order conformed with the order of eigenvalues in $\Sigma^2$.
+
+\subsection{Consequences of the SVD}
+There are several consequences of the SVD that are immensely important that we will show here. They will also come up in our application to PCA. First we define the reduced SVD.
+
+\subsubsection{The Reduced SVD}
+Let $A\in \mathbb{R}^{m\times n}$ with rank $r$. Which parts of our decomposition really matter? Recall:
+\begin{align*}
+    A&=U\Sigma V^T\\
+    &=[ u_1 \dots u_r \mid u_{r+1} \dots u_m]\begin{bmatrix}\sigma_1 \\&&\ddots\\&&&\sigma_r\\&&&&0\\&&&&&\ddots\\&&&&&&0\end{bmatrix}\begin{bmatrix}v_1\\\vdots \\ v_r \\\hline v_{r+1}\\\vdots \\ v_n\end{bmatrix} \\
+    &=[ \sigma_1u_1 \dots \sigma_ru_r \mid 0 \dots 0]\begin{bmatrix}v_1\\\vdots \\ v_r \\\hline v_{r+1}\\\vdots \\ v_n\end{bmatrix}\\
+    &=[ \sigma_1u_1 \dots \sigma_ru_r]\begin{bmatrix}v_1\\\vdots \\ v_r\end{bmatrix}\\
+    &= [ u_1 \dots u_r]\begin{bmatrix}\sigma_1&&0 \\&\ddots\\0&&\sigma_r\end{bmatrix}\begin{bmatrix}v_1\\\vdots \\ v_r\end{bmatrix}
+\end{align*}
+This gives us the following definition:
+\bigskip
+
+\paragraph{Definition:} The \underline{reduced SVD} of $A\in \mathbb{R}^{m\times n}$ with rank $r$ is the following reduced factorization of the SVD:
+
+$$A=[ u_1 \dots u_r]\begin{bmatrix}\sigma_1&&0 \\&\ddots\\0&&\sigma_r\end{bmatrix}\begin{bmatrix}v_1\\\vdots \\ v_r\end{bmatrix}=\hat{U}\hat{\Sigma}\hat{V^\top}$$
+
+In the reduced SVD the matrix $\Sigma$ is square matrix and $U,V^\top$ are rectangular. Note that this is opposite of the SVD where $U,V^\top$ are square and $\Sigma$ is rectangular.
+
+\subsubsection{Rank One Decomposition}
+Every matrix has multiple ways of being written as the sum of rank one matrices. For example, if $A\in\mathbb{R}^{m\times n}$ you can create $m$ rank one matrices $R_i$ by retaining row $i$ of $A$ and replacing all other entries of $A$ by 0. Then $A=R_1+\dots+R_m$ is a decomposition of A into rank one matrices. Many such rank one decompositions have no clear importance, however the SVD creates a special rank one decomposition that has many uses. The SVD allows
+every matrix to be written as a positive linear combination of rank one matrices. The number of rank one
+matrices in the decomposition is exactly the rank of the matrix.
+
+\begin{theorem}
+Let $A\in\mathbb{R}^{m\times n}$ be a matrix of rank $r$ and reduced SVD of the form $\hat{U}\hat{\Sigma}\hat{V^\top}$. Then $A$ admits a rank one decomposition:
+
+$$A=\sigma_1u_1v^\top_1+\sigma_2u_2v^\top_2+\dots+\sigma_ru_rv^\top_r$$
+\end{theorem}
+
 
 \subsection{Examples}
 We will perform the Singular Value Decomposition of the following matrix:
@@ -210,7 +250,7 @@ Recall that $B$ is our data matrix with the mean of each row subtracted off and 
 $$T=BV=U\Sigma$$
 What this means is that we can also find the PCA simply using the SVD!
 
-\item Interpreting the Principle Components: We have the principal components, now what? What do these mean? The eigenvalues of $C$, found in step 4 (also the singular values of the SVD of $B$) represents the amount of variance captured by the particular loading $V$. In many cases most of the variance will be captured in the first few principal components. It follows from this that if we want to reduce the dimensions, say to dim $k$, of our data matrix we can simply take the matrix composed of the first $k$ principal components. We can then explicitly compute the amount of variance retained in our reduced matrix by taking the sum of the eigenvalues (singular values of SVD) of the principal components of the reduced matrix and dividing them by the total. For a rank $n$ matrix and a rank $k$ reduced matrix this looks like,
+\item Interpreting the Principle Components: We have the principal components, now what? What do these mean? The eigenvalues of $C$, found in step 4 (also the singular values of the SVD of $B$) represents the amount of variance captured by the particular loading $V$. In many cases most of the variance will be captured in the first few principal components. Why this is helpful is we can see the PCA as a sort of change of basis into an ordered basis where the basis vectors are ordered by how much of the data's variability thee contain. Thus what we did in our example was compute the principal components and plot them in the basis of principal components 1 and 2, dropping the others (the ones that contained the least variability). We can also explicitly compute the amount of variance contained by only considering $k$ principal components. This is done by taking the sum of the eigenvalues (singular values of SVD) of the principal components and dividing them by the total. For data set of rank $n$ matrix using only $k$ principal components this looks like,
 
 $$\text{Var}(B)=\frac{\sum_{j=1}^{k}\lambda_j}{\sum_{j=1}^{n}\lambda_j}$$
 
@@ -218,8 +258,17 @@ Or equivalently in the language of the SVD,
 
 $$\text{Var}(B)=\frac{\sum_{j=1}^{k}\sigma^2_j}{\sum_{j=1}^{n}\sigma^2_j}$$
 
+\item Finding a Reduced Rank Matrix: Now that you have found and analyzed the principal components, say you want to keep your data in a reduced form, but put it back into the standard basis. We can also do this by the SVD. Recall that the SVD implies the existence of a useful rank one decomposition in the form,
 
-Going back to the example in the introduction we can see that we used the first two principal components to create a nice 2 dimensional graph that was able to answer our question. Now that we got the idea of what PCA we will do a simple example to get a feel for how the computations look.
+$$B=\sigma_1u_1v^\top_1+\sigma_2u_2v^\top_2+\dots+\sigma_ru_rv^\top_r$$
+
+To get a lower rank approximation of our data matrix using the concept of principal component analysis we can simply take the partial sum of the rank one matrices.
+
+$$B_k=\sum_{i=1}1^k\sigma_iu_iv^\top_i$$
+
+Note that the rank of $B_k$ is $k$. This matrix is a good approximation of $B$. In fact, $B_k$ is the "closest" rank $k$ matrix to $B$ possible (in the 2-norm). We will not prove this but see the conclusion for more information.
+
+\item Finishing Up: Now you should have a basic idea about the concept of PCA. PCA is vastly complicated and there is more discussion that could be had about many of the parts. All these notes aim to do is give a brief introduction and give a feel for its incredible usefulness. 
 \end{enumerate}
 
 \subsection{Example problem}
@@ -302,12 +351,14 @@ For completeness sake, below is the calculation (in Julia) for the principal com
 \includegraphics[width=6cm]{(19).png}
 \end{center}
 
+\newpage
 \section{Conclusion and Other Applications}
-So far we have reviewed what the SVD is and how to compute it. We have looked at one application of the SVD in statistics called Principal Component Analysis. However, we are only barely touching on all the possible applications of the SVD. The SVD has uses in both "pure" math and application in many other other contexts. Some example uses of SVD outside of PCA are:
+So far we have reviewed what the SVD is and how to compute it. We have looked at one application of the SVD in statistics called Principal Component Analysis. However, we are only barely touching on all the possible applications of the SVD. The SVD has uses in both "pure" math and application in many other other contexts. If the this introduction to the SVD was interesting, some possible areas to go next (pertaining to the SVD of course) are:
 \begin{itemize}
-  \item The PCA can be applied to images and form a rudimentary image compression algorithm.
+  \item Eckart-Young theorem. This states that our rank $k$ approximation for $B$, denoted in the notes as $B_k$ is the closest rank $k$ approximation of $B$ in the 2-norm.
+  \item PCA applied to images to form a rudimentary image compression algorithm.
   \item Solving $Ax = b$ where $A$ is not a square matrix. This approach is often used in linear regression models.
-  \item It is involved in Google's 'PageRank' algorithm, as well as in other modern search engines. It is also used to find correlation patterns for recommendations on Netflix, YouTube, etc.
+  \item Google's 'PageRank' algorithm. It, as well as in other modern search engines use SVD. It is also used to find correlation patterns for recommendations on Netflix, YouTube, etc.
 \end{itemize}
 
 
