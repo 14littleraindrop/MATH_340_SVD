@@ -20,7 +20,7 @@
 \setlength\parindent{24pt}
 
 \title{Singular Value Decomposition}
-\author{Vincent Mollicone, Chris Lee, and Helen Chen}
+\author{Vincent Mollicone, Chris Lee, Helen Chen, and Anjali Agarwal}
 \date{\today}
 
 \geometry{margin=1in, top=0.5in}
@@ -46,7 +46,7 @@ AV =A \begin{pmatrix} \vec{v}_1 & \vec{v}_2 & \cdots & \vec{v}_n  \\ \downarrow 
 &= \begin{pmatrix} \vec{u}_1 & \vec{u}_2 & \cdots & \vec{u}_n  \\ \downarrow & \downarrow & &\downarrow \end{pmatrix} \begin{pmatrix} \sigma_1 & 0 & \cdots & 0 \\ 0& \sigma_2 & \cdots & 0 \\ \vdots & \vdots & \ddots & \sigma_n \end{pmatrix} \\
 &= U \Sigma
 \end{align*}
-where $\vec{v}_1, \vec{v}_2, \cdots, \vec{v}_n$ are orthonormal to each other (hence $V$ orthonormal), $\vec{u}_1, \vec{u}_2, \cdots, \vec{u}_n$ are orthonormal orthonormal to each other (hence $U$ orthonormal), and $\Sigma$ is diagonal.
+where $\vec{v}_1, \vec{v}_2, \cdots, \vec{v}_n$ are orthonormal to each other (hence $V$ orthonormal), $\vec{u}_1, \vec{u}_2, \cdots, \vec{u}_n$ are orthonormal to each other (hence $U$ orthonormal), and $\Sigma$ is diagonal.
 
 Since $V$ is orthogonal, $V^{-1} = V^T$, hence after rearranging we have
 \begin{align*}
@@ -139,7 +139,7 @@ Similarly, we can obtain $U$ by writing,
 $$AA^T = (U \Sigma V^T)(U \Sigma V^T)^T = U \Sigma V^T V \Sigma^TU^T = U \Sigma  \Sigma^TU^T = U  \Sigma^2U^{-1}$$
 Then 
 $$U = \begin{pmatrix} \vec{u}_{\lambda_1} & \vec{u}_{\lambda_2} & \cdots & \vec{u}_{\lambda_m} \end{pmatrix}$$ 
-where $\vec{u}_{\lambda_i}$ are normalized orthogonal eigenvectors corresponding to the same set of $\Sigma^2$. One thing we have to be careful is that the order of $\vec{u}_{\lambda_i}$'s matters. They must be in the order conformed with the order of eigenvalues in $\Sigma^2$.
+where $\vec{u}_{\lambda_i}$ are normalized orthogonal eigenvectors corresponding to the same set of $\Sigma^2$. One thing we have to be careful is that the order of $\vec{u}_{\lambda_i}$'s matters. They must be in the order conformed with the order of eigenvalues in $\Sigma^2$. More over, since orthonormal set of eigenvector of a matrix is not unique (multiply any of them by $-1$ will not change the orthonormality), we need to be careful with which set we pick. In the next section, we will see an example of this and how we should pick the eigenvector set $\vec{u}_i$'s.
 
 \subsection{Consequences of the SVD}
 There are several consequences of the SVD that are immensely important that we will show here. They will also come up in our application to PCA. First we define the reduced SVD.
@@ -198,6 +198,10 @@ $$A = U \Sigma V^T = \begin{bmatrix}1& 0\\0& -1\end{bmatrix}
 \begin{bmatrix}4\sqrt{2}& 0\\0& 3\sqrt{2}\end{bmatrix}
 \begin{bmatrix}\frac{1}{\sqrt{2}}&\frac{1}{\sqrt{2}}\\\frac{1}{\sqrt{2}}&\frac{-1}{\sqrt{2}}\end{bmatrix}$$
 
+Notice that if we calculate $U$ using the same method we did to find $V$, we will find $AA^T$ has eigenvalues $\lambda = 32, 18$ and one choice of eigenvectors $\{ \vec{u}_1, \vec{u}_2 \}$  will be $\begin{pmatrix}  1 \\ 0 \end{pmatrix}, \begin{pmatrix}  0 \\ 1 \end{pmatrix}$ receptively, which is not the answer we got!? Note that if we multiply any of these eigenvectors by $-1$ it will still be a valid set of orthonormal basis. So which we should pick?
+
+Recall from section 2.1 that we want $ A \vec{v}_i = \sigma_i \vec{u}_i$ for all $i$'s. Hence, our choice of $\vec{u}_i$ is limited by our previous choice of $\vec{v}_i$. Here, since $A\vec{v}_2= \begin{pmatrix} 0 \\  -3 \sqrt{2} \end{pmatrix}$, we need to have $\vec{u}_2 = \begin{pmatrix}   0 \\ -1 \end{pmatrix}$ (with $\sigma_2 = \sqrt{18} = 3 \sqrt{2}$), like what we got above.
+
 \newpage
 \section{Application - Principal Component Analysis}
 \subsection{What Is Principal Component Analysis?}
@@ -208,7 +212,7 @@ Take a look at the following table of food consumption.
 \end{center}
 
 
-Suppose you wanted to see if one of these countries consumes a diet significantly different than the others. How would you do that? At first glance they all seem very similar. You might notice some interesting variation among certain food types, but the overall variation is certainly not obvious. 
+Suppose you wanted to see if one of these countries consumes a diet that is significantly different than the others. How would you do that? At first glance they all seem very similar. You might notice some interesting variation among certain food types, but the overall variation is certainly not obvious.
 \bigskip
 
 We can use a process called principal component analysis (PCA) to help us out. PCA is a factorization used for reducing the dimensions of a multivariate data set. Furthermore, when it reduces the dimensions, it does so by projecting the total dimensions onto a lower dimensional space in such as way that preserves as much of the variability within the data as possible.
@@ -250,7 +254,8 @@ Recall that $B$ is our data matrix with the mean of each row subtracted off and 
 $$T=BV=U\Sigma$$
 What this means is that we can also find the PCA simply using the SVD!
 
-\item Interpreting the Principle Components: We have the principal components, now what? What do these mean? The eigenvalues of $C$, found in step 4 (also the singular values of the SVD of $B$) represents the amount of variance captured by the particular loading $V$. In many cases most of the variance will be captured in the first few principal components. Why this is helpful is we can see the PCA as a sort of change of basis into an ordered basis where the basis vectors are ordered by how much of the data's variability thee contain. Thus what we did in our example was compute the principal components and plot them in the basis of principal components 1 and 2, dropping the others (the ones that contained the least variability). We can also explicitly compute the amount of variance contained by only considering $k$ principal components. This is done by taking the sum of the eigenvalues (singular values of SVD) of the principal components and dividing them by the total. For data set of rank $n$ matrix using only $k$ principal components this looks like,
+\item Interpreting the Principle Components: We have the principal components, now what? What do these mean? The eigenvalues of $C$, found in step 4 (also the singular values of the SVD of $B$) represent the amount of variance captured by the particular loading $V$. In many cases most of the variance will be captured in the first few principal components. Why this is helpful is we can see the PCA as a sort of change of basis into an ordered basis where the basis vectors are ordered by how much of the data's variability thee contain. Thus what we did in our example was compute the principal components and plot them in the basis of principal components 1 and 2, dropping the others (the ones that contained the least variability). We can also explicitly compute the amount of variance contained by only considering $k$ principal components. This is done by taking the sum of the eigenvalues (singular values of SVD) of the principal components and dividing them by the total. For data set of rank $n$ matrix using only $k$ principal components this looks like,
+
 
 $$\text{Var}(B)=\frac{\sum_{j=1}^{k}\lambda_j}{\sum_{j=1}^{n}\lambda_j}$$
 
